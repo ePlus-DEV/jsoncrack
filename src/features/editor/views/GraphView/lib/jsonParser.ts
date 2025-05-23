@@ -76,7 +76,11 @@ export function parser(jsonStr: string): Graph {
     // filter parent nodes that have no children
     // not the best way to do this, but it works
     const filteredNodes = states.graph.nodes.filter(node => {
-      return !(node.data.isParent && node.data.childrenCount === 0);
+      if (node.data.isParent && node.data.childrenCount === 0) {
+        return false;
+      }
+
+      return true;
     });
 
     // add path to nodes
