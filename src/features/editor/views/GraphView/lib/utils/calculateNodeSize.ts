@@ -26,7 +26,7 @@ const calculateWidthAndHeight = (str: string, single = false) => {
 
   const dummyElement = document.createElement("div");
   dummyElement.style.whiteSpace = single ? "nowrap" : "pre-wrap";
-  dummyElement.innerText = str;
+  dummyElement.innerHTML = str;
   dummyElement.style.fontSize = "12px";
   dummyElement.style.width = "fit-content";
   dummyElement.style.padding = "0 10px";

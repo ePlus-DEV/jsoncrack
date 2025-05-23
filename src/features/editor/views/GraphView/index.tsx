@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, LoadingOverlay, useComputedColorScheme } from "@mantine/core";
+import { LoadingOverlay, useComputedColorScheme } from "@mantine/core";
 import { useDebouncedValue } from "@mantine/hooks";
 import styled from "styled-components";
 import debounce from "lodash.debounce";
@@ -136,10 +136,12 @@ const GraphCanvas = ({ isWidget }: GraphProps) => {
   );
 };
 
+const SUPPORTED_LIMIT = +(process.env.NEXT_PUBLIC_NODE_LIMIT as string);
+
 export const GraphView = ({ isWidget = false }: GraphProps) => {
   const setViewPort = useGraph(state => state.setViewPort);
   const viewPort = useGraph(state => state.viewPort);
-  const aboveSupportedLimit = useGraph(state => state.aboveSupportedLimit);
+  const aboveSupportedLimit = useGraph(state => state.nodes.length > SUPPORTED_LIMIT);
   const loading = useGraph(state => state.loading);
   const gesturesEnabled = useConfig(state => state.gesturesEnabled);
   const rulersEnabled = useConfig(state => state.rulersEnabled);
@@ -166,9 +168,12 @@ export const GraphView = ({ isWidget = false }: GraphProps) => {
     setViewPort(viewPort!);
   }, 300);
 
+  if (aboveSupportedLimit) {
+    return <NotSupported />;
+  }
+
   return (
-    <Box pos="relative" h="100%" w="100%">
-      {aboveSupportedLimit && <NotSupported />}
+    <>
       <LoadingOverlay visible={debouncedLoading} />
       {!isWidget && <OptionsMenu />}
       {!isWidget && <SecureInfo />}
@@ -192,6 +197,6 @@ export const GraphView = ({ isWidget = false }: GraphProps) => {
           <GraphCanvas isWidget={isWidget} />
         </Space>
       </StyledEditorWrapper>
-    </Box>
+    </>
   );
 };
